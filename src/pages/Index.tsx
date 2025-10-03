@@ -3,7 +3,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { PublicationCard } from "@/components/PublicationCard";
 import { StatsCard } from "@/components/StatsCard";
 import { Button } from "@/components/ui/button";
-import { Database, Sparkles, Network, Rocket } from "lucide-react";
+import { Database, Sparkles, Network, Rocket, FileText } from "lucide-react";
 import heroImage from "@/assets/hero-space.jpg";
 
 const Index = () => {
@@ -63,10 +63,10 @@ const Index = () => {
             
             <h1 className="text-5xl md:text-7xl font-bold leading-tight">
               <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-                AstroKnowledge
+                Moon Hackers
               </span>
               <br />
-              <span className="text-foreground">Discovery Platform</span>
+              <span className="text-foreground">Research Discovery</span>
             </h1>
             
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
@@ -190,6 +190,70 @@ const Index = () => {
                 Automatic assessment of research applicability to Artemis Moon program and Mars exploration initiatives
               </p>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Data Sources Section */}
+      <section className="container mx-auto px-4 py-16 border-t border-border/30">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-foreground mb-3">
+              Data Sources & References
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Our platform integrates data from official NASA repositories and peer-reviewed scientific publications
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-6">
+            <a 
+              href="https://www.nasa.gov/osdr-api/" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="glass-effect p-6 rounded-xl hover:glow-primary transition-all duration-300 group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-lg bg-primary/20 flex items-center justify-center glow-primary flex-shrink-0">
+                  <Database className="h-6 w-6 text-primary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    NASA OSDR API
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Open Science Data Repository - Biological and physical science data from space biology experiments
+                  </p>
+                  <p className="text-xs text-primary font-mono">
+                    www.nasa.gov/osdr-api
+                  </p>
+                </div>
+              </div>
+            </a>
+
+            <a 
+              href="https://academic.oup.com/nar/article/49/D1/D1515/5932845?login=false" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="glass-effect p-6 rounded-xl hover:glow-secondary transition-all duration-300 group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="h-12 w-12 rounded-lg bg-secondary/20 flex items-center justify-center glow-secondary flex-shrink-0">
+                  <FileText className="h-6 w-6 text-secondary" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl font-semibold text-foreground mb-2 group-hover:text-secondary transition-colors">
+                    GeneLab Database
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-3">
+                    Nucleic Acids Research - Comprehensive omics database for spaceflight and space-relevant studies
+                  </p>
+                  <p className="text-xs text-secondary font-mono">
+                    academic.oup.com/nar
+                  </p>
+                </div>
+              </div>
+            </a>
           </div>
         </div>
       </section>
