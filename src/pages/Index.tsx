@@ -2,14 +2,28 @@ import { useState } from "react";
 import { SearchBar } from "@/components/SearchBar";
 import { PublicationCard } from "@/components/PublicationCard";
 import { StatsCard } from "@/components/StatsCard";
+import { PlanetAnimation } from "@/components/PlanetAnimation";
 import { Button } from "@/components/ui/button";
 import { Database, Sparkles, Network, Rocket, FileText } from "lucide-react";
 import heroImage from "@/assets/hero-space.jpg";
 
 const Index = () => {
   const [searchResults, setSearchResults] = useState<any[]>([]);
+  const [planetType, setPlanetType] = useState<"mars" | "moon" | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleSearch = (query: string) => {
+    setSearchQuery(query);
+    
+    // Detect planet type from search query
+    const lowerQuery = query.toLowerCase();
+    if (lowerQuery.includes("mars")) {
+      setPlanetType("mars");
+    } else if (lowerQuery.includes("moon") || lowerQuery.includes("lunar")) {
+      setPlanetType("moon");
+    } else {
+      setPlanetType(null);
+    }
     // Mock search results - will be replaced with actual NASA API integration
     const mockResults = [
       {
@@ -42,6 +56,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      <PlanetAnimation planetType={planetType} searchQuery={searchQuery} />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
         <div 
