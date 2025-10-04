@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Sphere, useTexture } from "@react-three/drei";
 import * as THREE from "three";
+import moonTexture from "@/assets/moon-texture.jpg";
 
 interface PlanetAnimationProps {
   planetType: "mars" | "moon" | null;
@@ -66,6 +67,7 @@ function Mars() {
 
 function Moon() {
   const meshRef = useRef<THREE.Mesh>(null);
+  const texture = useTexture(moonTexture);
   
   useFrame((state) => {
     if (meshRef.current) {
@@ -76,50 +78,12 @@ function Moon() {
   return (
     <Sphere ref={meshRef} args={[2, 64, 64]}>
       <meshStandardMaterial
-        color="#c0c0c0"
+        map={texture}
         roughness={1}
         metalness={0}
-      >
-        {/* Moon-like texture with craters */}
-        <primitive 
-          attach="map" 
-          object={(() => {
-            const canvas = document.createElement('canvas');
-            canvas.width = 512;
-            canvas.height = 512;
-            const ctx = canvas.getContext('2d')!;
-            
-            // Base gray color
-            const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
-            gradient.addColorStop(0, '#e0e0e0');
-            gradient.addColorStop(0.5, '#c0c0c0');
-            gradient.addColorStop(1, '#808080');
-            ctx.fillStyle = gradient;
-            ctx.fillRect(0, 0, 512, 512);
-            
-            // Add craters
-            for (let i = 0; i < 150; i++) {
-              const x = Math.random() * 512;
-              const y = Math.random() * 512;
-              const radius = Math.random() * 40 + 5;
-              
-              ctx.fillStyle = `rgba(96, 96, 96, ${Math.random() * 0.4})`;
-              ctx.beginPath();
-              ctx.arc(x, y, radius, 0, Math.PI * 2);
-              ctx.fill();
-              
-              // Crater highlight
-              ctx.fillStyle = `rgba(224, 224, 224, ${Math.random() * 0.2})`;
-              ctx.beginPath();
-              ctx.arc(x - radius * 0.3, y - radius * 0.3, radius * 0.3, 0, Math.PI * 2);
-              ctx.fill();
-            }
-            
-            const texture = new THREE.CanvasTexture(canvas);
-            return texture;
-          })()}
-        />
-      </meshStandardMaterial>
+        bumpMap={texture}
+        bumpScale={0.05}
+      />
     </Sphere>
   );
 }
