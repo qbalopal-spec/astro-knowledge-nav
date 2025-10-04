@@ -3,6 +3,7 @@ import { SearchBar } from "@/components/SearchBar";
 import { PublicationCard } from "@/components/PublicationCard";
 import { StatsCard } from "@/components/StatsCard";
 import { PlanetAnimation } from "@/components/PlanetAnimation";
+import { MilkyWayBackground } from "@/components/MilkyWayBackground";
 import { Button } from "@/components/ui/button";
 import { Database, Sparkles, Network, Rocket, FileText } from "lucide-react";
 import heroImage from "@/assets/hero-space.jpg";
@@ -56,6 +57,7 @@ const Index = () => {
 
   return (
     <div className="min-h-screen">
+      <MilkyWayBackground />
       <PlanetAnimation planetType={planetType} searchQuery={searchQuery} />
       {/* Hero Section */}
       <section className="relative overflow-hidden">
