@@ -1,8 +1,127 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Sphere, useTexture } from "@react-three/drei";
+import * as THREE from "three";
 
 interface PlanetAnimationProps {
   planetType: "mars" | "moon" | null;
   searchQuery: string;
+}
+
+function Mars() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.002;
+    }
+  });
+
+  return (
+    <Sphere ref={meshRef} args={[2, 64, 64]}>
+      <meshStandardMaterial
+        color="#cd5c5c"
+        roughness={0.9}
+        metalness={0.1}
+      >
+        {/* Mars-like texture with procedural bumps */}
+        <primitive 
+          attach="map" 
+          object={(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d')!;
+            
+            // Base red/orange color
+            const gradient = ctx.createLinearGradient(0, 0, 512, 512);
+            gradient.addColorStop(0, '#cd5c5c');
+            gradient.addColorStop(0.5, '#a0522d');
+            gradient.addColorStop(1, '#8b4513');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Add craters and surface details
+            for (let i = 0; i < 100; i++) {
+              ctx.fillStyle = `rgba(139, 69, 19, ${Math.random() * 0.3})`;
+              ctx.beginPath();
+              ctx.arc(
+                Math.random() * 512,
+                Math.random() * 512,
+                Math.random() * 30 + 5,
+                0,
+                Math.PI * 2
+              );
+              ctx.fill();
+            }
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            return texture;
+          })()}
+        />
+      </meshStandardMaterial>
+    </Sphere>
+  );
+}
+
+function Moon() {
+  const meshRef = useRef<THREE.Mesh>(null);
+  
+  useFrame((state) => {
+    if (meshRef.current) {
+      meshRef.current.rotation.y += 0.001;
+    }
+  });
+
+  return (
+    <Sphere ref={meshRef} args={[2, 64, 64]}>
+      <meshStandardMaterial
+        color="#c0c0c0"
+        roughness={1}
+        metalness={0}
+      >
+        {/* Moon-like texture with craters */}
+        <primitive 
+          attach="map" 
+          object={(() => {
+            const canvas = document.createElement('canvas');
+            canvas.width = 512;
+            canvas.height = 512;
+            const ctx = canvas.getContext('2d')!;
+            
+            // Base gray color
+            const gradient = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
+            gradient.addColorStop(0, '#e0e0e0');
+            gradient.addColorStop(0.5, '#c0c0c0');
+            gradient.addColorStop(1, '#808080');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, 512, 512);
+            
+            // Add craters
+            for (let i = 0; i < 150; i++) {
+              const x = Math.random() * 512;
+              const y = Math.random() * 512;
+              const radius = Math.random() * 40 + 5;
+              
+              ctx.fillStyle = `rgba(96, 96, 96, ${Math.random() * 0.4})`;
+              ctx.beginPath();
+              ctx.arc(x, y, radius, 0, Math.PI * 2);
+              ctx.fill();
+              
+              // Crater highlight
+              ctx.fillStyle = `rgba(224, 224, 224, ${Math.random() * 0.2})`;
+              ctx.beginPath();
+              ctx.arc(x - radius * 0.3, y - radius * 0.3, radius * 0.3, 0, Math.PI * 2);
+              ctx.fill();
+            }
+            
+            const texture = new THREE.CanvasTexture(canvas);
+            return texture;
+          })()}
+        />
+      </meshStandardMaterial>
+    </Sphere>
+  );
 }
 
 export const PlanetAnimation = ({ planetType, searchQuery }: PlanetAnimationProps) => {
@@ -28,15 +147,11 @@ export const PlanetAnimation = ({ planetType, searchQuery }: PlanetAnimationProp
 
   const planetInfo = {
     mars: {
-      color: "hsl(var(--accent))",
-      gradient: "var(--gradient-mars)",
       title: "Mars Research",
       description: "Exploring radiation biology, long-duration missions, and bioregenerative life support systems",
       emoji: "🔴"
     },
     moon: {
-      color: "hsl(210 15% 70%)",
-      gradient: "linear-gradient(135deg, hsl(210 15% 70%) 0%, hsl(210 10% 50%) 100%)",
       title: "Lunar Research",
       description: "Investigating lunar regolith agriculture, radiation effects, and sustainable habitat systems",
       emoji: "🌙"
@@ -74,49 +189,37 @@ export const PlanetAnimation = ({ planetType, searchQuery }: PlanetAnimationProp
         />
       </div>
 
-      {/* Planet Zoom Animation */}
+      {/* 3D Planet */}
       <div 
         className={`relative transition-all duration-2000 ease-out ${
           isZooming ? 'scale-0 opacity-0' : 'scale-100 opacity-100'
         }`}
         style={{
-          animation: isZooming ? 'zoomToPlanet 2s ease-out forwards' : 'none'
+          animation: isZooming ? 'zoomToPlanet 2s ease-out forwards' : 'none',
+          width: '500px',
+          height: '500px'
         }}
       >
-        <div 
-          className="relative w-64 h-64 md:w-96 md:h-96 rounded-full flex items-center justify-center"
-          style={{
-            background: info.gradient,
-            boxShadow: `0 0 60px ${info.color}, 0 0 120px ${info.color}, 0 0 180px ${info.color}`,
-            animation: "spin 20s linear infinite"
-          }}
-        >
-          {/* Crater effects for visual detail */}
-          <div className="absolute inset-0 rounded-full overflow-hidden opacity-30">
-            <div className="absolute top-1/4 left-1/4 w-12 h-12 rounded-full bg-black/20" />
-            <div className="absolute top-1/2 right-1/4 w-8 h-8 rounded-full bg-black/15" />
-            <div className="absolute bottom-1/3 left-1/3 w-10 h-10 rounded-full bg-black/25" />
-            <div className="absolute top-2/3 right-1/3 w-6 h-6 rounded-full bg-black/10" />
-          </div>
+        <Canvas camera={{ position: [0, 0, 6], fov: 50 }}>
+          <ambientLight intensity={0.3} />
+          <pointLight position={[10, 10, 10]} intensity={1.5} />
+          <pointLight position={[-10, -10, -10]} intensity={0.5} color="#4169e1" />
+          
+          {planetType === "mars" ? <Mars /> : <Moon />}
+        </Canvas>
 
-          {/* Info overlay */}
-          <div className="relative z-10 text-center p-8 bg-background/80 backdrop-blur-sm rounded-2xl max-w-xs">
-            <div className="text-6xl mb-4 animate-bounce">{info.emoji}</div>
-            <h3 className="text-2xl font-bold text-foreground mb-2">{info.title}</h3>
-            <p className="text-sm text-muted-foreground">{info.description}</p>
-            <div className="mt-4 text-xs text-primary font-mono">
-              Searching: {searchQuery}
-            </div>
+        {/* Info overlay */}
+        <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 text-center p-6 bg-background/90 backdrop-blur-sm rounded-2xl max-w-md mb-8">
+          <div className="text-4xl mb-3">{info.emoji}</div>
+          <h3 className="text-2xl font-bold text-foreground mb-2">{info.title}</h3>
+          <p className="text-sm text-muted-foreground mb-3">{info.description}</p>
+          <div className="text-xs text-primary font-mono">
+            Searching: {searchQuery}
           </div>
         </div>
       </div>
 
       <style>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
         @keyframes zoomToPlanet {
           0% { 
             transform: scale(0) translateZ(-1000px);
